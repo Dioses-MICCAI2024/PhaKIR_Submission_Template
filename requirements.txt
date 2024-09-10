@@ -1,3 +1,13 @@
-opencv-python==4.8.0.74
-opencv-python-headless==4.8.0.74
+opencv-python
+imageio
+iopath
+matplotlib
+monai
 numpy==1.26.4
+pandas
+pycocotools
+scikit-image==0.24.0
+scikit-learn==1.5.1
+scipy==1.14.1
+simplejson
+timm==1.0.9
