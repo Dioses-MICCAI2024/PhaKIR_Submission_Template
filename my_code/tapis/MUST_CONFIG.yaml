@@ -1,5 +1,5 @@
 TRAIN:
-  ENABLE: True
+  ENABLE: False
   DATASET: phakirms
   BATCH_SIZE: 24
   EVAL_PERIOD: 1

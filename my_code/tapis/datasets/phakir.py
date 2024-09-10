@@ -230,7 +230,7 @@ class Phakir_transformer(Psi_ava_transformer):
     """
     PSI-AVA dataloader.
     """
-    def __init__(self, cfg, split, include_subvideo=True):
+    def __init__(self, cfg, split, include_subvideo=False):
         super().__init__(cfg,split)
         self.include_subvideo = include_subvideo
         self.fps = 1
@@ -243,7 +243,7 @@ class Phakir_transformer(Psi_ava_transformer):
     def keyframe_mapping(self, video_idx, sec_idx, sec):
         return sec - 1
 
-    def _load_samples_features_old(self, samples, cfg, include_subvideo=True):
+    def _load_samples_features_old(self, samples, cfg, include_subvideo=False):
         if self._split == "train":
             feat_path = cfg.TEMPORAL_MODULE.FEATURE_PATH_TRAIN
         elif self._split == "val":
@@ -569,7 +569,7 @@ class Phakir_transformer(Psi_ava_transformer):
                 case_dict[case_number] = [path]
         return case_dict
     
-    def get_temporal_feature_paths_per_case(self, feature_paths, include_subvideo=True):
+    def get_temporal_feature_paths_per_case(self, feature_paths, include_subvideo=False):
         case_dict = {}
 
         if not include_subvideo:
@@ -605,12 +605,11 @@ class Phakir_transformer(Psi_ava_transformer):
         # Get the path of the middle frame 
         video_idx, sec_idx, sec, center_idx = self._keyframe_indices[idx]
         video_name = self._video_idx_to_name[video_idx]
-        video_part = (sec // 1000) * 1000
-        complete_name = '{}/frame_{}.{}'.format(video_part, str(sec).zfill(self.zero_fill), self.image_type)
+        complete_name = 'frame_{}.{}'.format(str(sec).zfill(self.zero_fill), self.image_type)
 
          #TODO: REMOVE when all done
         folder_to_images = "/".join(self._image_paths[video_idx][0].split('/')[:-2])
-        path_complete_name = os.path.join(folder_to_images,complete_name)
+        path_complete_name = os.path.join(folder_to_images, "Frames", complete_name)
         
         found_idx = self._image_paths[video_idx].index(path_complete_name)
         
@@ -621,9 +620,8 @@ class Phakir_transformer(Psi_ava_transformer):
         video_feat_paths = self.feature_paths[video_name]
         
         #feat_idx = video_feat_paths.index(complete_name)
-        subvideo_complete_name = os.path.join(video_name, complete_name)
-        feat_idx = video_feat_paths.index(subvideo_complete_name)
-        
+        # subvideo_complete_name = os.path.join(video_name, complete_name)
+        feat_idx = video_feat_paths.index(os.path.join(video_name, complete_name))
 
         seq_len = self._video_length * self._sample_rate
 

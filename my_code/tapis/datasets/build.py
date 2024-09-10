@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 # Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
-from datasets.phakir import Phakirms
+from datasets.phakir import Phakirms, Phakir_transformer
 
 def build_dataset(dataset_name, cfg, split):
     """
@@ -19,4 +19,11 @@ def build_dataset(dataset_name, cfg, split):
     # start with an uppercase letter.
     # Sar_rarp(cfg, split)
     # name = dataset_name.capitalize()
-    return Phakirms(cfg, split) #DATASET_REGISTRY.get(name)(cfg, split)
+    if dataset_name == "phakirms":
+        return Phakirms(cfg, split) #DATASET_REGISTRY.get(name)(cfg, split)
+    
+    elif dataset_name == "Phakir_transformer":
+        return Phakir_transformer(cfg, split)
+    
+    else:
+        raise NotImplementedError(f"Dataset {dataset_name} not supported.")

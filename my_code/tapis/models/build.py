@@ -5,6 +5,7 @@
 
 import torch
 from models.model_builder import MMViT
+from models.model_builder import VideoTransformerPerFrame
 
 
 def build_model(cfg, gpu_id=None):
@@ -24,12 +25,12 @@ def build_model(cfg, gpu_id=None):
             cfg.NUM_GPUS == 0
         ), "Cuda is not available. Please set `NUM_GPUS: 0 for running on CPUs."
 
-    if cfg.MODEL.ARCH == 'MMViT':
-        # Construct the model
-        model = MMViT(cfg)
+    if cfg.MODEL.ARCH == 'VideoTransformerPerFrame':
+        # Construct the model for Temporal Consistency Module
+        model = VideoTransformerPerFrame(cfg)
     else:
-        model = MMViT(cfg) #TODO: Cargar el modelo de videotransformer
-    
+        # Construc the Multi-Temporal Module
+        model = MMViT(cfg)
 
     if cfg.NUM_GPUS:
         if gpu_id is None:

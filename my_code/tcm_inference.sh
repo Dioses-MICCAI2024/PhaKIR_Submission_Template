@@ -1,5 +1,5 @@
-CONFIG_PATH="my_code/tapis/MUST_CONFIG.yaml"
-CHECK_POINT="my_model/must_model.pyth"
+CONFIG_PATH="my_code/tapis/TCM_CONFIG.yaml"
+CHECK_POINT="my_model/tcm_model.pyth"
 #-------------------------
 
 TEST_DIR='inputs'
@@ -10,7 +10,7 @@ WORKERS=10
 
 #python III_multitask/multitask_recognition/format_videos.py $TEST_DIR $OUTPUT_DIR
 
-python -W ignore my_code/tapis/run_net_must.py \
+python -W ignore my_code/tapis/run_net_tcm.py \
 --cfg $CONFIG_PATH \
 DATA_LOADER.NUM_WORKERS $WORKERS \
 TEST.BATCH_SIZE $BATCH \

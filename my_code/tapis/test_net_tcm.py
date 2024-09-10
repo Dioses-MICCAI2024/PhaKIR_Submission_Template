@@ -37,13 +37,23 @@ def eval_epoch(val_loader, model, cfg):
             slowfast/config/defaults.py
     """
 
+    map_categories = {0: 'Preparation',
+                      1: 'CalotTriangleDissection',
+                      2: 'ClippingCutting',
+                      3: 'GallbladderDissection',
+                      4: 'GallbladderRetraction',
+                      5: 'CleaningCoagulation',
+                      6: 'GallbladderPackaging'}
+
     # Evaluation mode enabled.
     preds_dict = {}
-    box_preds_dict = {}
     model.eval()
-    for (inputs, labels, data, image_names) in tqdm(val_loader,desc='Multi-Temporal Module Predictions [PHASES RECOGNITION] ...'):
-        
 
+    for (inputs, labels, data, image_names) in tqdm(val_loader, desc='Temporal Consistency Module Predictions [PHASES RECOGNITION] ...'):
+
+        video_name = image_names[0].split('/')[0]
+        image_name = int(image_names[0].split('/')[1].split('.')[0].split('_')[-1]) 
+        
         if cfg.NUM_GPUS:
             # Transferthe data to the current GPU device.
             if isinstance(inputs[0][0], (list,)):
@@ -56,8 +66,25 @@ def eval_epoch(val_loader, model, cfg):
                         inputs[i][j] = inputs[i][j].cuda(non_blocking=True)
 
         #Predictions for the "gestures" (action recognition) and "tools" (instrument segmentation) tasks
-        model(inputs, image_names=image_names)
+        preds = model(inputs)['phases'].cpu().numpy()
+        phase = map_categories[np.argmax(preds, axis=1).item()]
 
+        if video_name not in preds_dict:
+            preds_dict[video_name] = {}
+            preds_dict[video_name][image_name] = phase
+
+        else:
+            preds_dict[video_name][image_name] = phase
+        
+    # Save predictions in .csv for each video
+    for video_name in preds_dict.keys():
+        # Create directory for each video
+        if not os.path.exists(os.path.join(cfg.OUTPUT_DIR, video_name)):
+            os.makedirs(os.path.join(cfg.OUTPUT_DIR, video_name))
+        with open(os.path.join(cfg.OUTPUT_DIR, video_name, video_name + '_Phases.csv'), 'w') as f:
+            f.write('Frame,Phase\n')
+            for frame in sorted(preds_dict[video_name].keys()):
+                f.write(f'{frame},{preds_dict[video_name][frame]}\n')
 
 def test(cfg):
     """

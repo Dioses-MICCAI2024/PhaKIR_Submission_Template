@@ -14,4 +14,6 @@ python format_videos.py
 
 sh ./my_code/must_inference.sh
 
+sh ./my_code/tcm_inference.sh
+
 #sh ./my_code/segmentation_inference.sh
